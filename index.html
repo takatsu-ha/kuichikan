@@ -10,97 +10,73 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
   <style>
     :root {
-      --green: #1D9E75;
-      --green-dark: #0F6E56;
-      --green-bg: #E1F5EE;
-      --green-mid: #5DCAA5;
-      --blue: #378ADD;
-      --blue-dark: #185FA5;
-      --blue-bg: #E6F1FB;
-      --blue-border: #85B7EB;
-      --purple: #7F77DD;
-      --purple-dark: #534AB7;
-      --purple-bg: #EEEDFE;
-      --purple-border: #AFA9EC;
-      --orange: #D85A30;
-      --orange-dark: #712B13;
-      --orange-bg: #FAECE7;
-      --orange-border: #F0997B;
-      --text-primary: #1A1A1A;
-      --text-secondary: #6B6B6B;
-      --border: #E0E0E0;
-      --border-light: #EBEBEB;
-      --surface: #FFFFFF;
-      --surface-2: #F7F7F7;
-      --radius-sm: 8px;
-      --radius-md: 12px;
-      --radius-lg: 16px;
+      --green: #1D9E75; --green-dark: #0F6E56; --green-bg: #E1F5EE; --green-mid: #5DCAA5;
+      --blue: #378ADD; --blue-dark: #185FA5; --blue-bg: #E6F1FB; --blue-border: #85B7EB;
+      --purple: #7F77DD; --purple-dark: #534AB7; --purple-bg: #EEEDFE; --purple-border: #AFA9EC;
+      --orange: #D85A30; --orange-dark: #712B13; --orange-bg: #FAECE7; --orange-border: #F0997B;
+      --text-primary: #1A1A1A; --text-secondary: #6B6B6B;
+      --border: #E0E0E0; --border-light: #EBEBEB;
+      --surface: #FFFFFF; --surface-2: #F7F7F7;
+      --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px;
     }
     @media (prefers-color-scheme: dark) {
       :root {
-        --text-primary: #F0F0F0;
-        --text-secondary: #9A9A9A;
-        --border: #333333;
-        --border-light: #2A2A2A;
-        --surface: #1C1C1E;
-        --surface-2: #2C2C2E;
+        --text-primary: #F0F0F0; --text-secondary: #9A9A9A;
+        --border: #333333; --border-light: #2A2A2A;
+        --surface: #1C1C1E; --surface-2: #2C2C2E;
       }
     }
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', sans-serif; background: var(--surface-2); color: var(--text-primary); min-height: 100vh; padding-bottom: env(safe-area-inset-bottom); }
 
+    /* ===== タブ ===== */
+    .tab-bar { display: flex; background: var(--surface); border-bottom: 0.5px solid var(--border); position: sticky; top: 0; z-index: 50; }
+    .tab-btn { flex: 1; padding: 13px 0; font-size: 13px; font-weight: 500; color: var(--text-secondary); background: none; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; font-family: inherit; }
+    .tab-btn i { font-size: 20px; }
+    .tab-btn.active { color: var(--green); border-bottom: 2px solid var(--green); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
     .app { padding: 16px; max-width: 540px; margin: 0 auto; }
 
-    /* ヘッダー */
+    /* ===== ヘッダー ===== */
     .header { display: flex; align-items: center; gap: 12px; padding: 16px 0 20px; }
     .header-icon { width: 40px; height: 40px; border-radius: var(--radius-md); background: var(--green); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .header-icon i { color: #fff; font-size: 22px; }
     .header-title { font-size: 18px; font-weight: 600; color: var(--text-primary); }
     .header-sub { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
 
-    /* カード */
+    /* ===== カード・フィールド ===== */
     .card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 16px; margin-bottom: 14px; }
     .card-label { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
     .card-label i { font-size: 14px; }
-
-    /* フィールド */
     .field { margin-bottom: 12px; }
     .field:last-child { margin-bottom: 0; }
     .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     label { display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: 5px; font-weight: 400; }
-
     input[type="text"], input[type="date"], input[type="number"], select, textarea {
       width: 100%; font-size: 16px; padding: 11px 13px;
-      border: 0.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      background: var(--surface-2);
-      color: var(--text-primary);
-      -webkit-appearance: none; appearance: none;
-      font-family: inherit;
+      border: 0.5px solid var(--border); border-radius: var(--radius-sm);
+      background: var(--surface-2); color: var(--text-primary);
+      -webkit-appearance: none; appearance: none; font-family: inherit;
     }
     input:focus, select:focus, textarea:focus {
       outline: none; border-color: var(--green);
-      box-shadow: 0 0 0 3px rgba(29,158,117,0.15);
-      background: var(--surface);
+      box-shadow: 0 0 0 3px rgba(29,158,117,0.15); background: var(--surface);
     }
     textarea { resize: none; line-height: 1.5; font-size: 14px; height: 58px; }
     select {
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B6B6B' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
       background-repeat: no-repeat; background-position: right 13px center; padding-right: 38px;
     }
-
-    /* 単位付き入力 */
     .unit-wrap { position: relative; }
     .unit-wrap input { padding-right: 44px; }
     .unit-tag { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 13px; color: var(--text-secondary); pointer-events: none; font-weight: 500; }
-
-    /* GL基準バッジ */
     .gl-note { display: inline-block; font-size: 10px; font-weight: 600; color: var(--blue-dark); background: var(--blue-bg); border-radius: 4px; padding: 1px 6px; margin-left: 5px; letter-spacing: 0.03em; vertical-align: middle; }
     .obstacle-area .gl-note { color: #993C1D; background: #fdd9cc; }
-
     .divider { height: 0.5px; background: var(--border-light); margin: 12px 0; }
 
-    /* セクション見出し */
+    /* ===== セクション見出し ===== */
     .block-group { margin-bottom: 14px; }
     .block-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; padding: 0 2px; }
     .block-title { font-size: 14px; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 7px; }
@@ -110,10 +86,10 @@
     .block-title.back i { color: var(--purple); }
     .badge { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; }
     .badge.pile { background: var(--green-bg); color: var(--green-dark); }
-    .badge.exc  { background: var(--blue-bg);   color: var(--blue-dark); }
+    .badge.exc  { background: var(--blue-bg);  color: var(--blue-dark); }
     .badge.back { background: var(--purple-bg); color: var(--purple-dark); }
 
-    /* 地点カード */
+    /* ===== 地点カード ===== */
     .point-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 13px 15px; margin-bottom: 8px; }
     .point-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 11px; }
     .point-num { font-size: 12px; font-weight: 600; padding: 3px 11px; border-radius: 20px; }
@@ -123,7 +99,7 @@
     .remove-btn { width: 30px; height: 30px; border-radius: 50%; border: 0.5px solid var(--border); background: var(--surface-2); color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 15px; }
     .remove-btn:active { background: #FCEBEB; border-color: #F09595; color: #A32D2D; }
 
-    /* トグル */
+    /* ===== トグル ===== */
     .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 7px 0; }
     .toggle-wrap .toggle-main { font-size: 14px; color: var(--text-primary); }
     .toggle-wrap .toggle-sub  { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
@@ -132,50 +108,94 @@
     .toggle-thumb { position: absolute; width: 22px; height: 22px; border-radius: 50%; background: #fff; top: 3px; left: 3px; box-shadow: 0 1px 4px rgba(0,0,0,.25); transition: left .2s; }
     .toggle.on .toggle-thumb { left: 23px; }
 
-    /* 障害エリア */
+    /* ===== 障害エリア ===== */
     .obstacle-area { margin-top: 8px; display: none; background: var(--orange-bg); border: 0.5px solid var(--orange-border); border-radius: var(--radius-sm); padding: 13px; }
     .obstacle-area.visible { display: block; }
     .obstacle-area .obs-label { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; color: var(--orange-dark); text-transform: uppercase; margin-bottom: 11px; display: flex; align-items: center; gap: 5px; }
     .obstacle-area label { color: #993C1D; }
-    .obstacle-area input[type="number"] { background: #fff; border-color: var(--orange-border); }
-    .obstacle-area input[type="number"]:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(216,90,48,.15); }
+    .obstacle-area input[type="text"] { background: #fff; border-color: var(--orange-border); }
+    .obstacle-area input[type="text"]:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(216,90,48,.15); }
     .obstacle-area textarea { background: #fff; border-color: var(--orange-border); height: 56px; }
     .obstacle-area textarea:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(216,90,48,.15); }
 
-    /* 備考エリア */
+    /* ===== 備考エリア ===== */
     .remarks-area { margin-top: 10px; }
     .remarks-area label { color: var(--text-secondary); display: flex; align-items: center; gap: 5px; }
     .remarks-area label i { font-size: 13px; }
     .remarks-area textarea { margin-top: 5px; background: var(--surface-2); }
 
-    /* 追加ボタン */
+    /* ===== ボタン ===== */
     .add-btn { width: 100%; padding: 11px; font-size: 14px; font-weight: 500; border-radius: var(--radius-sm); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; font-family: inherit; }
     .add-btn.pile { color: var(--green-dark); background: var(--green-bg); border: 1px dashed var(--green-mid); }
     .add-btn.exc  { color: var(--blue-dark);  background: var(--blue-bg);  border: 1px dashed var(--blue-border); }
     .add-btn.back { color: var(--purple-dark); background: var(--purple-bg); border: 1px dashed var(--purple-border); }
     .add-btn:active { opacity: 0.7; }
-
-    /* 保存・リセット */
     .submit-btn { width: 100%; padding: 15px; font-size: 16px; font-weight: 600; background: var(--green); color: #fff; border: none; border-radius: var(--radius-lg); cursor: pointer; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: inherit; }
     .submit-btn:active { opacity: 0.85; transform: scale(0.99); }
+    .submit-btn:disabled { opacity: 0.6; }
     .clear-btn { width: 100%; padding: 12px; font-size: 14px; color: var(--text-secondary); background: transparent; border: 0.5px solid var(--border); border-radius: var(--radius-lg); cursor: pointer; margin-top: 9px; margin-bottom: 16px; display: flex; align-items: center; justify-content: center; gap: 6px; font-family: inherit; }
 
-    /* CSVエリア */
-    .csv-card { background: var(--surface-2); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 15px; margin-bottom: 32px; }
-    .csv-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 11px; }
-    .csv-title { font-size: 13px; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 6px; }
-    .csv-title i { font-size: 15px; color: var(--green-dark); }
-    .csv-count { font-size: 12px; color: var(--green-dark); background: var(--green-bg); padding: 3px 9px; border-radius: 20px; font-weight: 600; }
-    .export-btn { width: 100%; padding: 11px; font-size: 14px; font-weight: 500; color: var(--green-dark); background: var(--green-bg); border: 0.5px solid var(--green-mid); border-radius: var(--radius-sm); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px; font-family: inherit; }
-    .export-btn:active { opacity: 0.75; }
+    /* ===== 送信先案内 ===== */
+    .info-card { background: var(--surface-2); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 15px; margin-bottom: 32px; }
+    .info-card-header { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; font-size: 13px; font-weight: 600; color: var(--text-primary); }
+    .info-card-header i { color: var(--green-dark); font-size: 16px; }
+    .info-card p { font-size: 12px; color: var(--text-secondary); line-height: 1.7; }
 
-    /* トースト */
-    .toast { position: fixed; bottom: calc(24px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%) translateY(80px); background: #085041; color: #9FE1CB; padding: 13px 22px; border-radius: 28px; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 8px; transition: transform .3s cubic-bezier(.34,1.56,.64,1); white-space: nowrap; z-index: 999; box-shadow: 0 4px 20px rgba(0,0,0,.18); }
+    /* ===== 履歴タブ ===== */
+    .history-header { padding: 16px 16px 8px; display: flex; align-items: center; justify-content: space-between; }
+    .history-title { font-size: 18px; font-weight: 600; }
+    .history-count { font-size: 12px; color: var(--green-dark); background: var(--green-bg); padding: 3px 10px; border-radius: 20px; font-weight: 600; }
+    .history-empty { text-align: center; padding: 60px 20px; color: var(--text-secondary); font-size: 14px; }
+    .history-empty i { font-size: 40px; display: block; margin-bottom: 12px; opacity: 0.4; }
+
+    .session-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); margin: 0 16px 12px; overflow: hidden; }
+    .session-header { padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; }
+    .session-meta { display: flex; flex-direction: column; gap: 3px; }
+    .session-date { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+    .session-info { font-size: 12px; color: var(--text-secondary); }
+    .session-actions { display: flex; gap: 8px; }
+    .btn-edit { padding: 7px 14px; font-size: 13px; font-weight: 500; color: var(--blue-dark); background: var(--blue-bg); border: 0.5px solid var(--blue-border); border-radius: var(--radius-sm); cursor: pointer; font-family: inherit; display: flex; align-items: center; gap: 5px; }
+    .btn-delete { padding: 7px 10px; font-size: 13px; color: #A32D2D; background: #FCEBEB; border: 0.5px solid #F09595; border-radius: var(--radius-sm); cursor: pointer; font-family: inherit; display: flex; align-items: center; gap: 5px; }
+    .btn-edit:active { opacity: 0.75; }
+    .btn-delete:active { opacity: 0.75; }
+
+    .session-rows { border-top: 0.5px solid var(--border-light); }
+    .session-row { padding: 9px 14px; border-bottom: 0.5px solid var(--border-light); display: flex; align-items: flex-start; gap: 8px; }
+    .session-row:last-child { border-bottom: none; }
+    .row-type { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px; white-space: nowrap; flex-shrink: 0; margin-top: 1px; }
+    .row-type.杭芯セット完了 { background: var(--green-bg); color: var(--green-dark); }
+    .row-type.掘削完了 { background: var(--blue-bg); color: var(--blue-dark); }
+    .row-type.埋め戻し完了 { background: var(--purple-bg); color: var(--purple-dark); }
+    .row-detail { font-size: 12px; color: var(--text-secondary); line-height: 1.6; }
+    .row-detail strong { color: var(--text-primary); font-weight: 500; }
+
+    /* ===== 編集モードバナー ===== */
+    .edit-banner { background: #FFF3CD; border: 0.5px solid #FFCA28; border-radius: var(--radius-md); padding: 11px 14px; margin-bottom: 14px; display: none; align-items: center; justify-content: space-between; gap: 10px; }
+    .edit-banner.visible { display: flex; }
+    .edit-banner-text { font-size: 13px; color: #5C4200; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+    .edit-banner-text i { font-size: 16px; }
+    .btn-cancel-edit { padding: 6px 12px; font-size: 12px; color: #5C4200; background: transparent; border: 0.5px solid #FFCA28; border-radius: var(--radius-sm); cursor: pointer; font-family: inherit; }
+
+    /* ===== トースト ===== */
+    .toast { position: fixed; bottom: calc(70px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%) translateY(80px); background: #085041; color: #9FE1CB; padding: 13px 22px; border-radius: 28px; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 8px; transition: transform .3s cubic-bezier(.34,1.56,.64,1); white-space: nowrap; z-index: 999; box-shadow: 0 4px 20px rgba(0,0,0,.18); }
     .toast.show { transform: translateX(-50%) translateY(0); }
     @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
+
+<!-- タブバー -->
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('input')" id="tab-input">
+    <i class="ti ti-edit"></i>入力
+  </button>
+  <button class="tab-btn" onclick="switchTab('history')" id="tab-history">
+    <i class="ti ti-history"></i>送信履歴
+  </button>
+</div>
+
+<!-- ===== 入力タブ ===== -->
+<div class="tab-panel active" id="panel-input">
 <div class="app">
   <div class="header">
     <div class="header-icon"><i class="ti ti-crane"></i></div>
@@ -185,7 +205,12 @@
     </div>
   </div>
 
-  <!-- 基本情報 -->
+  <!-- 編集モードバナー -->
+  <div class="edit-banner" id="edit-banner">
+    <div class="edit-banner-text"><i class="ti ti-pencil"></i>修正モード：内容を修正して再送信してください</div>
+    <button class="btn-cancel-edit" onclick="cancelEdit()">キャンセル</button>
+  </div>
+
   <div class="card">
     <div class="card-label"><i class="ti ti-calendar"></i>基本情報</div>
     <div class="field">
@@ -202,7 +227,6 @@
     </div>
   </div>
 
-  <!-- 杭芯セット -->
   <div class="block-group">
     <div class="block-header">
       <div class="block-title pile"><i class="ti ti-map-pin"></i>杭芯セット完了地点</div>
@@ -212,7 +236,6 @@
     <button class="add-btn pile" onclick="addPile()"><i class="ti ti-plus"></i>地点を追加</button>
   </div>
 
-  <!-- 掘削 -->
   <div class="block-group">
     <div class="block-header">
       <div class="block-title exc"><i class="ti ti-arrow-down-circle"></i>掘削完了地点</div>
@@ -222,7 +245,6 @@
     <button class="add-btn exc" onclick="addExc()"><i class="ti ti-plus"></i>地点を追加</button>
   </div>
 
-  <!-- 埋め戻し -->
   <div class="block-group">
     <div class="block-header">
       <div class="block-title back"><i class="ti ti-layer-difference"></i>埋め戻し完了地点</div>
@@ -232,42 +254,56 @@
     <button class="add-btn back" onclick="addBack()"><i class="ti ti-plus"></i>地点を追加</button>
   </div>
 
-  <button class="submit-btn" onclick="submitRecord()">
-    <i class="ti ti-circle-check"></i>この日の実績を保存
+  <button class="submit-btn" id="submit-btn" onclick="submitRecord()">
+    <i class="ti ti-circle-check"></i>この日の実績を保存・送信
   </button>
-  <button class="clear-btn" onclick="resetAll()">
+  <button class="clear-btn" onclick="cancelEdit()">
     <i class="ti ti-refresh"></i>入力内容をリセット
   </button>
 
-  <!-- CSV -->
-  <div class="csv-card">
-    <div class="csv-header">
-      <span class="csv-title"><i class="ti ti-brand-google"></i>データ送信先</span>
-      <span class="csv-count" id="record-count">Googleスプレッドシート</span>
-    </div>
-    <div style="font-size:12px; color:var(--text-secondary); line-height:1.7;">
-      「この日の実績を保存」を押すと<br>
-      自動でスプレッドシートに送信されます。<br>
-      管理者はスプレッドシートからCSVをダウンロードするか、Power Queryで直接接続してください。
-    </div>
+  <div class="info-card">
+    <div class="info-card-header"><i class="ti ti-brand-google"></i>データ送信先</div>
+    <p>「保存・送信」を押すと自動でGoogleスプレッドシートに送信されます。<br>送信済みデータは「送信履歴」タブで確認・修正できます。</p>
   </div>
+</div>
+</div>
+
+<!-- ===== 履歴タブ ===== -->
+<div class="tab-panel" id="panel-history">
+  <div class="history-header">
+    <div class="history-title">送信履歴</div>
+    <span class="history-count" id="history-count">0 件</span>
+  </div>
+  <div id="history-list"></div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-const STORAGE_KEY = 'kojiRecords_v6';
+const STORAGE_KEY = 'kojiRecords_v7';
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbzJ4loW-JAY3JZA9TayWDsgMP5Mljw0i_AN9ySJ6bFDgGfzkUnCRrY33N-UdW9074njHQ/exec';
-let records = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+
+// sessions = [{ sessionId, 施工日, 号機番号, 送信日時, rows:[] }, ...]
+let sessions = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+let editingSessionId = null;
 let pileCount = 0, excCount = 0, backCount = 0;
 
+/* ===== タブ切り替え ===== */
+function switchTab(tab) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + tab).classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+  if (tab === 'history') renderHistory();
+}
+
+/* ===== 初期化 ===== */
 function init() {
   const t = new Date();
   const y = t.getFullYear(), m = String(t.getMonth()+1).padStart(2,'0'), d = String(t.getDate()).padStart(2,'0');
   document.getElementById('work-date').value = `${y}-${m}-${d}`;
   document.getElementById('today-label').textContent = `${y}年${m}月${d}日`;
-  addPile(); addExc(); addBack();
-  updateCount();
+  resetForm();
 }
 
 function remarksHTML() {
@@ -279,6 +315,7 @@ function remarksHTML() {
     </div>`;
 }
 
+/* ===== 地点カード追加 ===== */
 function addPile() {
   pileCount++;
   const n = pileCount;
@@ -292,10 +329,9 @@ function addPile() {
     <div class="field">
       <label>地点番号</label>
       <input type="text" placeholder="例：A-12" inputmode="text" data-field="pile-point">
-    </div>
-    ${remarksHTML()}`;
+    </div>${remarksHTML()}`;
   document.getElementById('pile-cards').appendChild(div);
-  updateBadge('pile-badge', pileCount, 'pile');
+  updateBadge('pile-badge', pileCount);
 }
 
 function addExc() {
@@ -370,10 +406,9 @@ function addExc() {
         <label>障害物</label>
         <textarea placeholder="障害の種類・状況・対応内容などを記録" data-field="obs-text"></textarea>
       </div>
-    </div>
-    ${remarksHTML()}`;
+    </div>${remarksHTML()}`;
   document.getElementById('exc-cards').appendChild(div);
-  updateBadge('exc-badge', excCount, 'exc');
+  updateBadge('exc-badge', excCount);
 }
 
 function addBack() {
@@ -389,10 +424,9 @@ function addBack() {
     <div class="field">
       <label>地点番号</label>
       <input type="text" placeholder="例：A-10" inputmode="text" data-field="back-point">
-    </div>
-    ${remarksHTML()}`;
+    </div>${remarksHTML()}`;
   document.getElementById('back-cards').appendChild(div);
-  updateBadge('back-badge', backCount, 'back');
+  updateBadge('back-badge', backCount);
 }
 
 function toggleObs(btn, boxId) {
@@ -410,10 +444,10 @@ function removeCard(containerId, badgeId, btn, type) {
   if (type === 'pile') pileCount = n;
   else if (type === 'exc') excCount = n;
   else backCount = n;
-  updateBadge(badgeId, n, type);
+  updateBadge(badgeId, n);
 }
 
-function updateBadge(id, n, type) {
+function updateBadge(id, n) {
   document.getElementById(id).textContent = `${n} 地点`;
 }
 
@@ -422,16 +456,14 @@ function getVal(card, field) {
   return el ? el.value.trim() : '';
 }
 
-function collectRows() {
-  const date = document.getElementById('work-date').value;
-  const asset = document.getElementById('asset-num').value;
+/* ===== データ収集 ===== */
+function collectRows(date, asset) {
   const base = { 施工日: date, 号機番号: asset, 登録日時: new Date().toLocaleString('ja-JP') };
   const rows = [];
-
   document.querySelectorAll('#pile-cards .point-card').forEach(card => {
     rows.push({ ...base, 種別: '杭芯セット完了', 地点番号: getVal(card,'pile-point'),
-      フライアッシュ層完了深度_mm: '', 掘削完了深度_mm: '', 生コン打設数量_m3: '',
-      地中障害: '', 障害発生深度_mm: '', 障害撤去完了深度_mm: '', 障害物: '',
+      フライアッシュ層完了深度_mm:'', 掘削完了深度_mm:'', 生コン打設数量_m3:'',
+      地中障害:'', 障害発生深度_mm:'', 障害撤去完了深度_mm:'', 障害物:'',
       備考: getVal(card,'remarks') });
   });
   document.querySelectorAll('#exc-cards .point-card').forEach(card => {
@@ -448,62 +480,213 @@ function collectRows() {
   });
   document.querySelectorAll('#back-cards .point-card').forEach(card => {
     rows.push({ ...base, 種別: '埋め戻し完了', 地点番号: getVal(card,'back-point'),
-      フライアッシュ層完了深度_mm: '', 掘削完了深度_mm: '', 生コン打設数量_m3: '',
-      地中障害: '', 障害発生深度_mm: '', 障害撤去完了深度_mm: '', 障害物: '',
+      フライアッシュ層完了深度_mm:'', 掘削完了深度_mm:'', 生コン打設数量_m3:'',
+      地中障害:'', 障害発生深度_mm:'', 障害撤去完了深度_mm:'', 障害物:'',
       備考: getVal(card,'remarks') });
   });
   return rows;
 }
 
+/* ===== 送信 ===== */
 async function submitRecord() {
   const date = document.getElementById('work-date').value;
   const asset = document.getElementById('asset-num').value;
   if (!date || !asset) { showToast('施工日と号機番号は必須です', true); return; }
 
-  const rows = collectRows();
+  const rows = collectRows(date, asset);
   if (rows.length === 0) { showToast('入力データがありません', true); return; }
 
-  // ボタンを送信中状態に
-  const btn = document.querySelector('.submit-btn');
+  const isUpdate = editingSessionId !== null;
+  const sessionId = isUpdate ? editingSessionId : ('s' + Date.now());
+  rows.forEach(r => r.sessionId = sessionId);
+
+  const btn = document.getElementById('submit-btn');
   btn.disabled = true;
   btn.innerHTML = '<i class="ti ti-loader-2" style="animation:spin 1s linear infinite;"></i>　送信中...';
 
   try {
     const res = await fetch(GAS_URL, {
       method: 'POST',
-      body: JSON.stringify(rows)
+      body: JSON.stringify({ mode: isUpdate ? 'update' : 'insert', sessionId, rows })
     });
     const json = await res.json();
     if (json.status === 'ok') {
-      showToast(`${rows.length}行をスプレッドシートに送信しました`);
-      resetAll();
+      // ローカル履歴を更新
+      if (isUpdate) {
+        const idx = sessions.findIndex(s => s.sessionId === sessionId);
+        if (idx !== -1) sessions[idx] = { sessionId, 施工日: date, 号機番号: asset, 送信日時: new Date().toLocaleString('ja-JP'), rows };
+      } else {
+        sessions.unshift({ sessionId, 施工日: date, 号機番号: asset, 送信日時: new Date().toLocaleString('ja-JP'), rows });
+      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
+      showToast(isUpdate ? '修正内容を再送信しました' : `${rows.length}行を送信しました`);
+      cancelEdit();
     } else {
       throw new Error(json.message || 'エラー');
     }
   } catch (err) {
     showToast('送信失敗：ネット接続を確認してください', true);
-    console.error(err);
   } finally {
     btn.disabled = false;
-    btn.innerHTML = '<i class="ti ti-circle-check"></i>この日の実績を保存';
+    btn.innerHTML = '<i class="ti ti-circle-check"></i>この日の実績を保存・送信';
   }
 }
 
-function resetAll() {
+/* ===== 編集開始 ===== */
+function startEdit(sessionId) {
+  const session = sessions.find(s => s.sessionId === sessionId);
+  if (!session) return;
+
+  editingSessionId = sessionId;
+  resetForm(false);
+
+  // 基本情報を復元
+  document.getElementById('work-date').value = session.施工日;
+  document.getElementById('asset-num').value = session.号機番号;
+
+  // 編集バナー表示
+  document.getElementById('edit-banner').classList.add('visible');
+  document.getElementById('submit-btn').innerHTML = '<i class="ti ti-send"></i>修正内容を再送信';
+
+  // 入力タブに切り替え
+  switchTab('input');
+
+  // 地点カードをクリアして復元
   ['pile-cards','exc-cards','back-cards'].forEach(id => document.getElementById(id).innerHTML = '');
   pileCount = 0; excCount = 0; backCount = 0;
+
+  const pileRows = session.rows.filter(r => r.種別 === '杭芯セット完了');
+  const excRows  = session.rows.filter(r => r.種別 === '掘削完了');
+  const backRows = session.rows.filter(r => r.種別 === '埋め戻し完了');
+
+  pileRows.forEach(row => {
+    addPile();
+    const card = document.querySelectorAll('#pile-cards .point-card');
+    const c = card[card.length - 1];
+    setVal(c, 'pile-point', row.地点番号);
+    setVal(c, 'remarks', row.備考);
+  });
+
+  excRows.forEach(row => {
+    addExc();
+    const cards = document.querySelectorAll('#exc-cards .point-card');
+    const c = cards[cards.length - 1];
+    setVal(c, 'exc-point', row.地点番号);
+    setVal(c, 'fly-depth', row.フライアッシュ層完了深度_mm);
+    setVal(c, 'exc-depth', row.掘削完了深度_mm);
+    setVal(c, 'concrete-vol', row.生コン打設数量_m3);
+    setVal(c, 'remarks', row.備考);
+    if (row.地中障害 === '有') {
+      const tog = c.querySelector('.toggle');
+      const obsId = tog.getAttribute('onclick').match(/'([^']+)'\)/)[1];
+      toggleObs(tog, obsId);
+      setVal(c, 'obs-start-depth', row.障害発生深度_mm);
+      setVal(c, 'obs-end-depth', row.障害撤去完了深度_mm);
+      setVal(c, 'obs-text', row.障害物);
+    }
+  });
+
+  backRows.forEach(row => {
+    addBack();
+    const cards = document.querySelectorAll('#back-cards .point-card');
+    const c = cards[cards.length - 1];
+    setVal(c, 'back-point', row.地点番号);
+    setVal(c, 'remarks', row.備考);
+  });
+
+  window.scrollTo(0, 0);
+}
+
+function setVal(card, field, value) {
+  const el = card.querySelector(`[data-field="${field}"]`);
+  if (el && value) el.value = value;
+}
+
+/* ===== 編集キャンセル・リセット ===== */
+function cancelEdit() {
+  editingSessionId = null;
+  document.getElementById('edit-banner').classList.remove('visible');
+  document.getElementById('submit-btn').innerHTML = '<i class="ti ti-circle-check"></i>この日の実績を保存・送信';
+  resetForm();
+}
+
+function resetForm(resetDate = true) {
+  ['pile-cards','exc-cards','back-cards'].forEach(id => document.getElementById(id).innerHTML = '');
+  pileCount = 0; excCount = 0; backCount = 0;
+  if (resetDate) {
+    const t = new Date();
+    document.getElementById('work-date').value = `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;
+  }
   document.getElementById('asset-num').value = '';
   addPile(); addExc(); addBack();
 }
 
-function updateCount() {
-  // Google連携版ではローカル件数は表示しない
+/* ===== 削除 ===== */
+function deleteSession(sessionId) {
+  if (!confirm('この送信履歴を削除しますか？\n※スプレッドシート上のデータも削除されます。')) return;
+  doDelete(sessionId);
 }
 
-function exportCSV() {
-  // 管理者はGoogleスプレッドシートからダウンロード
+async function doDelete(sessionId) {
+  try {
+    const res = await fetch(GAS_URL, {
+      method: 'POST',
+      body: JSON.stringify({ mode: 'update', sessionId, rows: [] })
+    });
+    const json = await res.json();
+    if (json.status === 'ok') {
+      sessions = sessions.filter(s => s.sessionId !== sessionId);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
+      renderHistory();
+      showToast('削除しました');
+    } else { throw new Error(); }
+  } catch {
+    showToast('削除失敗：ネット接続を確認してください', true);
+  }
 }
 
+/* ===== 履歴表示 ===== */
+function renderHistory() {
+  const list = document.getElementById('history-list');
+  document.getElementById('history-count').textContent = `${sessions.length} 件`;
+
+  if (sessions.length === 0) {
+    list.innerHTML = `<div class="history-empty"><i class="ti ti-inbox"></i>まだ送信履歴がありません</div>`;
+    return;
+  }
+
+  list.innerHTML = sessions.map(s => {
+    const rowsHTML = s.rows.map(r => {
+      let detail = `<strong>${r.地点番号 || '（地点番号なし）'}</strong>`;
+      if (r.種別 === '掘削完了') {
+        if (r.掘削完了深度_mm) detail += `　深度 ${r.掘削完了深度_mm}mm`;
+        if (r.生コン打設数量_m3) detail += `　生コン ${r.生コン打設数量_m3}m³`;
+        if (r.地中障害 === '有') detail += `　<span style="color:var(--orange);font-weight:600;">⚠ 障害あり</span>`;
+      }
+      if (r.備考) detail += `<br>備考：${r.備考}`;
+      return `<div class="session-row">
+        <span class="row-type ${r.種別}">${r.種別}</span>
+        <div class="row-detail">${detail}</div>
+      </div>`;
+    }).join('');
+
+    return `<div class="session-card">
+      <div class="session-header">
+        <div class="session-meta">
+          <div class="session-date">${s.施工日}　${s.号機番号}</div>
+          <div class="session-info">送信：${s.送信日時}　${s.rows.length}行</div>
+        </div>
+        <div class="session-actions">
+          <button class="btn-edit" onclick="startEdit('${s.sessionId}')"><i class="ti ti-pencil"></i>修正</button>
+          <button class="btn-delete" onclick="deleteSession('${s.sessionId}')"><i class="ti ti-trash"></i></button>
+        </div>
+      </div>
+      <div class="session-rows">${rowsHTML}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ===== トースト ===== */
 function showToast(msg, isError) {
   const t = document.getElementById('toast');
   t.innerHTML = `<i class="ti ti-${isError?'alert-circle':'circle-check'}"></i> ${msg}`;
@@ -513,11 +696,10 @@ function showToast(msg, isError) {
   setTimeout(() => t.classList.remove('show'), 2800);
 }
 
-// 数値フィールドのバリデーション（マイナス・小数点対応）
+/* ===== 数値バリデーション ===== */
 document.addEventListener('input', function(e) {
   if (!e.target.dataset.numeric) return;
   const v = e.target.value;
-  // 先頭マイナス1つ・数字・小数点のみ許可
   const cleaned = v.replace(/[^0-9.\-]/g, '').replace(/(?!^)-/g, '').replace(/(\..*)\./g, '$1');
   if (v !== cleaned) e.target.value = cleaned;
 });
