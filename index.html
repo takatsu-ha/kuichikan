@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="施工実績">
+  <title>施工実績入力</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+    :root {
+      --green: #1D9E75;
+      --green-dark: #0F6E56;
+      --green-bg: #E1F5EE;
+      --green-mid: #5DCAA5;
+      --blue: #378ADD;
+      --blue-dark: #185FA5;
+      --blue-bg: #E6F1FB;
+      --blue-border: #85B7EB;
+      --purple: #7F77DD;
+      --purple-dark: #534AB7;
+      --purple-bg: #EEEDFE;
+      --purple-border: #AFA9EC;
+      --orange: #D85A30;
+      --orange-dark: #712B13;
+      --orange-bg: #FAECE7;
+      --orange-border: #F0997B;
+      --text-primary: #1A1A1A;
+      --text-secondary: #6B6B6B;
+      --border: #E0E0E0;
+      --border-light: #EBEBEB;
+      --surface: #FFFFFF;
+      --surface-2: #F7F7F7;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --text-primary: #F0F0F0;
+        --text-secondary: #9A9A9A;
+        --border: #333333;
+        --border-light: #2A2A2A;
+        --surface: #1C1C1E;
+        --surface-2: #2C2C2E;
+      }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', sans-serif; background: var(--surface-2); color: var(--text-primary); min-height: 100vh; padding-bottom: env(safe-area-inset-bottom); }
+
+    .app { padding: 16px; max-width: 540px; margin: 0 auto; }
+
+    /* ヘッダー */
+    .header { display: flex; align-items: center; gap: 12px; padding: 16px 0 20px; }
+    .header-icon { width: 40px; height: 40px; border-radius: var(--radius-md); background: var(--green); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .header-icon i { color: #fff; font-size: 22px; }
+    .header-title { font-size: 18px; font-weight: 600; color: var(--text-primary); }
+    .header-sub { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+
+    /* カード */
+    .card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 16px; margin-bottom: 14px; }
+    .card-label { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+    .card-label i { font-size: 14px; }
+
+    /* フィールド */
+    .field { margin-bottom: 12px; }
+    .field:last-child { margin-bottom: 0; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    label { display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: 5px; font-weight: 400; }
+
+    input[type="text"], input[type="date"], input[type="number"], select, textarea {
+      width: 100%; font-size: 16px; padding: 11px 13px;
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface-2);
+      color: var(--text-primary);
+      -webkit-appearance: none; appearance: none;
+      font-family: inherit;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none; border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(29,158,117,0.15);
+      background: var(--surface);
+    }
+    textarea { resize: none; line-height: 1.5; font-size: 14px; height: 58px; }
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B6B6B' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 13px center; padding-right: 38px;
+    }
+
+    /* 単位付き入力 */
+    .unit-wrap { position: relative; }
+    .unit-wrap input { padding-right: 44px; }
+    .unit-tag { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 13px; color: var(--text-secondary); pointer-events: none; font-weight: 500; }
+
+    .divider { height: 0.5px; background: var(--border-light); margin: 12px 0; }
+
+    /* セクション見出し */
+    .block-group { margin-bottom: 14px; }
+    .block-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; padding: 0 2px; }
+    .block-title { font-size: 14px; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 7px; }
+    .block-title i { font-size: 17px; }
+    .block-title.pile i { color: var(--green); }
+    .block-title.exc  i { color: var(--blue); }
+    .block-title.back i { color: var(--purple); }
+    .badge { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; }
+    .badge.pile { background: var(--green-bg); color: var(--green-dark); }
+    .badge.exc  { background: var(--blue-bg);   color: var(--blue-dark); }
+    .badge.back { background: var(--purple-bg); color: var(--purple-dark); }
+
+    /* 地点カード */
+    .point-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 13px 15px; margin-bottom: 8px; }
+    .point-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 11px; }
+    .point-num { font-size: 12px; font-weight: 600; padding: 3px 11px; border-radius: 20px; }
+    .point-num.pile { background: var(--green-bg); color: var(--green-dark); }
+    .point-num.exc  { background: var(--blue-bg);  color: var(--blue-dark); }
+    .point-num.back { background: var(--purple-bg); color: var(--purple-dark); }
+    .remove-btn { width: 30px; height: 30px; border-radius: 50%; border: 0.5px solid var(--border); background: var(--surface-2); color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+    .remove-btn:active { background: #FCEBEB; border-color: #F09595; color: #A32D2D; }
+
+    /* トグル */
+    .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 7px 0; }
+    .toggle-wrap .toggle-main { font-size: 14px; color: var(--text-primary); }
+    .toggle-wrap .toggle-sub  { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+    .toggle { width: 48px; height: 28px; border-radius: 14px; background: var(--border); border: none; cursor: pointer; position: relative; flex-shrink: 0; transition: background .2s; }
+    .toggle.on { background: var(--orange); }
+    .toggle-thumb { position: absolute; width: 22px; height: 22px; border-radius: 50%; background: #fff; top: 3px; left: 3px; box-shadow: 0 1px 4px rgba(0,0,0,.25); transition: left .2s; }
+    .toggle.on .toggle-thumb { left: 23px; }
+
+    /* 障害エリア */
+    .obstacle-area { margin-top: 8px; display: none; background: var(--orange-bg); border: 0.5px solid var(--orange-border); border-radius: var(--radius-sm); padding: 13px; }
+    .obstacle-area.visible { display: block; }
+    .obstacle-area .obs-label { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; color: var(--orange-dark); text-transform: uppercase; margin-bottom: 11px; display: flex; align-items: center; gap: 5px; }
+    .obstacle-area label { color: #993C1D; }
+    .obstacle-area input[type="number"] { background: #fff; border-color: var(--orange-border); }
+    .obstacle-area input[type="number"]:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(216,90,48,.15); }
+    .obstacle-area textarea { background: #fff; border-color: var(--orange-border); height: 56px; }
+    .obstacle-area textarea:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(216,90,48,.15); }
+
+    /* 備考エリア */
+    .remarks-area { margin-top: 10px; }
+    .remarks-area label { color: var(--text-secondary); display: flex; align-items: center; gap: 5px; }
+    .remarks-area label i { font-size: 13px; }
+    .remarks-area textarea { margin-top: 5px; background: var(--surface-2); }
+
+    /* 追加ボタン */
+    .add-btn { width: 100%; padding: 11px; font-size: 14px; font-weight: 500; border-radius: var(--radius-sm); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; font-family: inherit; }
+    .add-btn.pile { color: var(--green-dark); background: var(--green-bg); border: 1px dashed var(--green-mid); }
+    .add-btn.exc  { color: var(--blue-dark);  background: var(--blue-bg);  border: 1px dashed var(--blue-border); }
+    .add-btn.back { color: var(--purple-dark); background: var(--purple-bg); border: 1px dashed var(--purple-border); }
+    .add-btn:active { opacity: 0.7; }
+
+    /* 保存・リセット */
+    .submit-btn { width: 100%; padding: 15px; font-size: 16px; font-weight: 600; background: var(--green); color: #fff; border: none; border-radius: var(--radius-lg); cursor: pointer; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: inherit; }
+    .submit-btn:active { opacity: 0.85; transform: scale(0.99); }
+    .clear-btn { width: 100%; padding: 12px; font-size: 14px; color: var(--text-secondary); background: transparent; border: 0.5px solid var(--border); border-radius: var(--radius-lg); cursor: pointer; margin-top: 9px; margin-bottom: 16px; display: flex; align-items: center; justify-content: center; gap: 6px; font-family: inherit; }
+
+    /* CSVエリア */
+    .csv-card { background: var(--surface-2); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 15px; margin-bottom: 32px; }
+    .csv-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 11px; }
+    .csv-title { font-size: 13px; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 6px; }
+    .csv-title i { font-size: 15px; color: var(--green-dark); }
+    .csv-count { font-size: 12px; color: var(--green-dark); background: var(--green-bg); padding: 3px 9px; border-radius: 20px; font-weight: 600; }
+    .export-btn { width: 100%; padding: 11px; font-size: 14px; font-weight: 500; color: var(--green-dark); background: var(--green-bg); border: 0.5px solid var(--green-mid); border-radius: var(--radius-sm); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px; font-family: inherit; }
+    .export-btn:active { opacity: 0.75; }
+
+    /* トースト */
+    .toast { position: fixed; bottom: calc(24px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%) translateY(80px); background: #085041; color: #9FE1CB; padding: 13px 22px; border-radius: 28px; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 8px; transition: transform .3s cubic-bezier(.34,1.56,.64,1); white-space: nowrap; z-index: 999; box-shadow: 0 4px 20px rgba(0,0,0,.18); }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="header-icon"><i class="ti ti-crane"></i></div>
+    <div>
+      <div class="header-title">施工実績入力</div>
+      <div class="header-sub" id="today-label"></div>
+    </div>
+  </div>
+
+  <!-- 基本情報 -->
+  <div class="card">
+    <div class="card-label"><i class="ti ti-calendar"></i>基本情報</div>
+    <div class="field">
+      <label>施工日</label>
+      <input type="date" id="work-date">
+    </div>
+    <div class="field">
+      <label>施工アセット 号機番号</label>
+      <select id="asset-num">
+        <option value="">-- 選択 --</option>
+        <option>1号機</option><option>2号機</option><option>3号機</option>
+        <option>4号機</option><option>5号機</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- 杭芯セット -->
+  <div class="block-group">
+    <div class="block-header">
+      <div class="block-title pile"><i class="ti ti-map-pin"></i>杭芯セット完了地点</div>
+      <span class="badge pile" id="pile-badge">1 地点</span>
+    </div>
+    <div id="pile-cards"></div>
+    <button class="add-btn pile" onclick="addPile()"><i class="ti ti-plus"></i>地点を追加</button>
+  </div>
+
+  <!-- 掘削 -->
+  <div class="block-group">
+    <div class="block-header">
+      <div class="block-title exc"><i class="ti ti-arrow-down-circle"></i>掘削完了地点</div>
+      <span class="badge exc" id="exc-badge">1 地点</span>
+    </div>
+    <div id="exc-cards"></div>
+    <button class="add-btn exc" onclick="addExc()"><i class="ti ti-plus"></i>地点を追加</button>
+  </div>
+
+  <!-- 埋め戻し -->
+  <div class="block-group">
+    <div class="block-header">
+      <div class="block-title back"><i class="ti ti-layer-difference"></i>埋め戻し完了地点</div>
+      <span class="badge back" id="back-badge">1 地点</span>
+    </div>
+    <div id="back-cards"></div>
+    <button class="add-btn back" onclick="addBack()"><i class="ti ti-plus"></i>地点を追加</button>
+  </div>
+
+  <button class="submit-btn" onclick="submitRecord()">
+    <i class="ti ti-circle-check"></i>この日の実績を保存
+  </button>
+  <button class="clear-btn" onclick="resetAll()">
+    <i class="ti ti-refresh"></i>入力内容をリセット
+  </button>
+
+  <!-- CSV -->
+  <div class="csv-card">
+    <div class="csv-header">
+      <span class="csv-title"><i class="ti ti-table"></i>保存済みデータ</span>
+      <span class="csv-count" id="record-count">0 件</span>
+    </div>
+    <button class="export-btn" onclick="exportCSV()">
+      <i class="ti ti-download"></i>CSVダウンロード（Power Query用）
+    </button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const STORAGE_KEY = 'kojiRecords_v6';
+let records = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+let pileCount = 0, excCount = 0, backCount = 0;
+
+function init() {
+  const t = new Date();
+  const y = t.getFullYear(), m = String(t.getMonth()+1).padStart(2,'0'), d = String(t.getDate()).padStart(2,'0');
+  document.getElementById('work-date').value = `${y}-${m}-${d}`;
+  document.getElementById('today-label').textContent = `${y}年${m}月${d}日`;
+  addPile(); addExc(); addBack();
+  updateCount();
+}
+
+function remarksHTML() {
+  return `
+    <div class="divider"></div>
+    <div class="remarks-area field">
+      <label><i class="ti ti-notes"></i>備考</label>
+      <textarea placeholder="特記事項があれば入力" data-field="remarks"></textarea>
+    </div>`;
+}
+
+function addPile() {
+  pileCount++;
+  const n = pileCount;
+  const div = document.createElement('div');
+  div.className = 'point-card';
+  div.innerHTML = `
+    <div class="point-card-header">
+      <span class="point-num pile">杭芯 ${n}</span>
+      ${n > 1 ? `<button class="remove-btn" onclick="removeCard('pile-cards','pile-badge',this,'pile')"><i class="ti ti-x"></i></button>` : '<span style="width:30px"></span>'}
+    </div>
+    <div class="field">
+      <label>地点番号</label>
+      <input type="text" placeholder="例：A-12" inputmode="text" data-field="pile-point">
+    </div>
+    ${remarksHTML()}`;
+  document.getElementById('pile-cards').appendChild(div);
+  updateBadge('pile-badge', pileCount, 'pile');
+}
+
+function addExc() {
+  excCount++;
+  const n = excCount;
+  const uid = 'ex' + Date.now() + n;
+  const boxId = 'box-' + uid;
+  const div = document.createElement('div');
+  div.className = 'point-card';
+  div.innerHTML = `
+    <div class="point-card-header">
+      <span class="point-num exc">掘削 ${n}</span>
+      ${n > 1 ? `<button class="remove-btn" onclick="removeCard('exc-cards','exc-badge',this,'exc')"><i class="ti ti-x"></i></button>` : '<span style="width:30px"></span>'}
+    </div>
+    <div class="field">
+      <label>地点番号</label>
+      <input type="text" placeholder="例：A-11" inputmode="text" data-field="exc-point">
+    </div>
+    <div class="divider"></div>
+    <div class="field-row">
+      <div class="field">
+        <label>フライアッシュ層完了深度</label>
+        <div class="unit-wrap">
+          <input type="number" placeholder="0" step="1" inputmode="numeric" data-field="fly-depth">
+          <span class="unit-tag">mm</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>掘削完了深度</label>
+        <div class="unit-wrap">
+          <input type="number" placeholder="0" step="1" inputmode="numeric" data-field="exc-depth">
+          <span class="unit-tag">mm</span>
+        </div>
+      </div>
+    </div>
+    <div class="field">
+      <label>生コン打設数量</label>
+      <div class="unit-wrap">
+        <input type="number" placeholder="0.00" step="0.01" inputmode="decimal" data-field="concrete-vol">
+        <span class="unit-tag">m³</span>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="toggle-row">
+      <div class="toggle-wrap">
+        <div class="toggle-main">地中障害</div>
+        <div class="toggle-sub">発生した場合はオンにする</div>
+      </div>
+      <button class="toggle" onclick="toggleObs(this,'${boxId}')" aria-pressed="false">
+        <div class="toggle-thumb"></div>
+      </button>
+    </div>
+    <div class="obstacle-area" id="${boxId}">
+      <div class="obs-label"><i class="ti ti-alert-triangle" style="font-size:13px;"></i>障害詳細</div>
+      <div class="field-row">
+        <div class="field">
+          <label>障害発生深度</label>
+          <div class="unit-wrap">
+            <input type="number" placeholder="0" step="1" inputmode="numeric" data-field="obs-start-depth">
+            <span class="unit-tag">mm</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>障害撤去完了深度</label>
+          <div class="unit-wrap">
+            <input type="number" placeholder="0" step="1" inputmode="numeric" data-field="obs-end-depth">
+            <span class="unit-tag">mm</span>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label>障害物</label>
+        <textarea placeholder="障害の種類・状況・対応内容などを記録" data-field="obs-text"></textarea>
+      </div>
+    </div>
+    ${remarksHTML()}`;
+  document.getElementById('exc-cards').appendChild(div);
+  updateBadge('exc-badge', excCount, 'exc');
+}
+
+function addBack() {
+  backCount++;
+  const n = backCount;
+  const div = document.createElement('div');
+  div.className = 'point-card';
+  div.innerHTML = `
+    <div class="point-card-header">
+      <span class="point-num back">埋戻 ${n}</span>
+      ${n > 1 ? `<button class="remove-btn" onclick="removeCard('back-cards','back-badge',this,'back')"><i class="ti ti-x"></i></button>` : '<span style="width:30px"></span>'}
+    </div>
+    <div class="field">
+      <label>地点番号</label>
+      <input type="text" placeholder="例：A-10" inputmode="text" data-field="back-point">
+    </div>
+    ${remarksHTML()}`;
+  document.getElementById('back-cards').appendChild(div);
+  updateBadge('back-badge', backCount, 'back');
+}
+
+function toggleObs(btn, boxId) {
+  const on = btn.classList.toggle('on');
+  btn.setAttribute('aria-pressed', on);
+  document.getElementById(boxId).classList.toggle('visible', on);
+}
+
+function removeCard(containerId, badgeId, btn, type) {
+  btn.closest('.point-card').remove();
+  const cards = document.querySelectorAll(`#${containerId} .point-card`);
+  const labels = { pile: '杭芯', exc: '掘削', back: '埋戻' };
+  cards.forEach((c, i) => { c.querySelector('.point-num').textContent = `${labels[type]} ${i+1}`; });
+  const n = cards.length;
+  if (type === 'pile') pileCount = n;
+  else if (type === 'exc') excCount = n;
+  else backCount = n;
+  updateBadge(badgeId, n, type);
+}
+
+function updateBadge(id, n, type) {
+  document.getElementById(id).textContent = `${n} 地点`;
+}
+
+function getVal(card, field) {
+  const el = card.querySelector(`[data-field="${field}"]`);
+  return el ? el.value.trim() : '';
+}
+
+function submitRecord() {
+  const date = document.getElementById('work-date').value;
+  const asset = document.getElementById('asset-num').value;
+  if (!date || !asset) { showToast('施工日と号機番号は必須です', true); return; }
+
+  const base = { 施工日: date, 号機番号: asset, 登録日時: new Date().toLocaleString('ja-JP') };
+  let added = 0;
+
+  document.querySelectorAll('#pile-cards .point-card').forEach(card => {
+    records.push({ ...base, 種別: '杭芯セット完了', 地点番号: getVal(card,'pile-point'),
+      フライアッシュ層完了深度_mm: '', 掘削完了深度_mm: '', 生コン打設数量_m3: '',
+      地中障害: '', 障害発生深度_mm: '', 障害撤去完了深度_mm: '', 障害物: '',
+      備考: getVal(card,'remarks') });
+    added++;
+  });
+
+  document.querySelectorAll('#exc-cards .point-card').forEach(card => {
+    const hasObs = card.querySelector('.toggle')?.classList.contains('on');
+    records.push({ ...base, 種別: '掘削完了', 地点番号: getVal(card,'exc-point'),
+      フライアッシュ層完了深度_mm: getVal(card,'fly-depth'),
+      掘削完了深度_mm: getVal(card,'exc-depth'),
+      生コン打設数量_m3: getVal(card,'concrete-vol'),
+      地中障害: hasObs ? '有' : '無',
+      障害発生深度_mm: hasObs ? getVal(card,'obs-start-depth') : '',
+      障害撤去完了深度_mm: hasObs ? getVal(card,'obs-end-depth') : '',
+      障害物: hasObs ? getVal(card,'obs-text') : '',
+      備考: getVal(card,'remarks') });
+    added++;
+  });
+
+  document.querySelectorAll('#back-cards .point-card').forEach(card => {
+    records.push({ ...base, 種別: '埋め戻し完了', 地点番号: getVal(card,'back-point'),
+      フライアッシュ層完了深度_mm: '', 掘削完了深度_mm: '', 生コン打設数量_m3: '',
+      地中障害: '', 障害発生深度_mm: '', 障害撤去完了深度_mm: '', 障害物: '',
+      備考: getVal(card,'remarks') });
+    added++;
+  });
+
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+  updateCount();
+  showToast(`${added}行を保存しました`);
+  resetAll();
+}
+
+function resetAll() {
+  ['pile-cards','exc-cards','back-cards'].forEach(id => document.getElementById(id).innerHTML = '');
+  pileCount = 0; excCount = 0; backCount = 0;
+  document.getElementById('asset-num').value = '';
+  addPile(); addExc(); addBack();
+}
+
+function updateCount() {
+  const dates = [...new Set(records.map(r => r['施工日']))];
+  document.getElementById('record-count').textContent = `${records.length} 行 / ${dates.length} 日分`;
+}
+
+function exportCSV() {
+  if (records.length === 0) { showToast('保存済みデータがありません', true); return; }
+  const keys = ['施工日','号機番号','種別','地点番号',
+    'フライアッシュ層完了深度_mm','掘削完了深度_mm','生コン打設数量_m3',
+    '地中障害','障害発生深度_mm','障害撤去完了深度_mm','障害物','備考','登録日時'];
+  const header = keys.join(',');
+  const rows = records.map(r => keys.map(k => `"${String(r[k]??'').replace(/"/g,'""')}"`).join(','));
+  const csv = '\uFEFF' + [header, ...rows].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `施工実績_${new Date().toISOString().slice(0,10).replace(/-/g,'')}.csv`;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('CSVをダウンロードしました');
+}
+
+function showToast(msg, isError) {
+  const t = document.getElementById('toast');
+  t.innerHTML = `<i class="ti ti-${isError?'alert-circle':'circle-check'}"></i> ${msg}`;
+  t.style.background = isError ? '#712B13' : '#085041';
+  t.style.color = isError ? '#F5C4B3' : '#9FE1CB';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+init();
+</script>
+</body>
+</html>
