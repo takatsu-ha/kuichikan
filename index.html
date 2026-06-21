@@ -172,6 +172,7 @@
     /* トースト */
     .toast { position: fixed; bottom: calc(24px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%) translateY(80px); background: #085041; color: #9FE1CB; padding: 13px 22px; border-radius: 28px; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 8px; transition: transform .3s cubic-bezier(.34,1.56,.64,1); white-space: nowrap; z-index: 999; box-shadow: 0 4px 20px rgba(0,0,0,.18); }
     .toast.show { transform: translateX(-50%) translateY(0); }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
@@ -241,12 +242,14 @@
   <!-- CSV -->
   <div class="csv-card">
     <div class="csv-header">
-      <span class="csv-title"><i class="ti ti-table"></i>保存済みデータ</span>
-      <span class="csv-count" id="record-count">0 件</span>
+      <span class="csv-title"><i class="ti ti-brand-google"></i>データ送信先</span>
+      <span class="csv-count" id="record-count">Googleスプレッドシート</span>
     </div>
-    <button class="export-btn" onclick="exportCSV()">
-      <i class="ti ti-download"></i>CSVダウンロード（Power Query用）
-    </button>
+    <div style="font-size:12px; color:var(--text-secondary); line-height:1.7;">
+      「この日の実績を保存」を押すと<br>
+      自動でスプレッドシートに送信されます。<br>
+      管理者はスプレッドシートからCSVをダウンロードするか、Power Queryで直接接続してください。
+    </div>
   </div>
 </div>
 
@@ -254,6 +257,7 @@
 
 <script>
 const STORAGE_KEY = 'kojiRecords_v6';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzJ4loW-JAY3JZA9TayWDsgMP5Mljw0i_AN9ySJ6bFDgGfzkUnCRrY33N-UdW9074njHQ/exec';
 let records = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
 let pileCount = 0, excCount = 0, backCount = 0;
 
@@ -418,25 +422,21 @@ function getVal(card, field) {
   return el ? el.value.trim() : '';
 }
 
-function submitRecord() {
+function collectRows() {
   const date = document.getElementById('work-date').value;
   const asset = document.getElementById('asset-num').value;
-  if (!date || !asset) { showToast('施工日と号機番号は必須です', true); return; }
-
   const base = { 施工日: date, 号機番号: asset, 登録日時: new Date().toLocaleString('ja-JP') };
-  let added = 0;
+  const rows = [];
 
   document.querySelectorAll('#pile-cards .point-card').forEach(card => {
-    records.push({ ...base, 種別: '杭芯セット完了', 地点番号: getVal(card,'pile-point'),
+    rows.push({ ...base, 種別: '杭芯セット完了', 地点番号: getVal(card,'pile-point'),
       フライアッシュ層完了深度_mm: '', 掘削完了深度_mm: '', 生コン打設数量_m3: '',
       地中障害: '', 障害発生深度_mm: '', 障害撤去完了深度_mm: '', 障害物: '',
       備考: getVal(card,'remarks') });
-    added++;
   });
-
   document.querySelectorAll('#exc-cards .point-card').forEach(card => {
     const hasObs = card.querySelector('.toggle')?.classList.contains('on');
-    records.push({ ...base, 種別: '掘削完了', 地点番号: getVal(card,'exc-point'),
+    rows.push({ ...base, 種別: '掘削完了', 地点番号: getVal(card,'exc-point'),
       フライアッシュ層完了深度_mm: getVal(card,'fly-depth'),
       掘削完了深度_mm: getVal(card,'exc-depth'),
       生コン打設数量_m3: getVal(card,'concrete-vol'),
@@ -445,21 +445,48 @@ function submitRecord() {
       障害撤去完了深度_mm: hasObs ? getVal(card,'obs-end-depth') : '',
       障害物: hasObs ? getVal(card,'obs-text') : '',
       備考: getVal(card,'remarks') });
-    added++;
   });
-
   document.querySelectorAll('#back-cards .point-card').forEach(card => {
-    records.push({ ...base, 種別: '埋め戻し完了', 地点番号: getVal(card,'back-point'),
+    rows.push({ ...base, 種別: '埋め戻し完了', 地点番号: getVal(card,'back-point'),
       フライアッシュ層完了深度_mm: '', 掘削完了深度_mm: '', 生コン打設数量_m3: '',
       地中障害: '', 障害発生深度_mm: '', 障害撤去完了深度_mm: '', 障害物: '',
       備考: getVal(card,'remarks') });
-    added++;
   });
+  return rows;
+}
 
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
-  updateCount();
-  showToast(`${added}行を保存しました`);
-  resetAll();
+async function submitRecord() {
+  const date = document.getElementById('work-date').value;
+  const asset = document.getElementById('asset-num').value;
+  if (!date || !asset) { showToast('施工日と号機番号は必須です', true); return; }
+
+  const rows = collectRows();
+  if (rows.length === 0) { showToast('入力データがありません', true); return; }
+
+  // ボタンを送信中状態に
+  const btn = document.querySelector('.submit-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="ti ti-loader-2" style="animation:spin 1s linear infinite;"></i>　送信中...';
+
+  try {
+    const res = await fetch(GAS_URL, {
+      method: 'POST',
+      body: JSON.stringify(rows)
+    });
+    const json = await res.json();
+    if (json.status === 'ok') {
+      showToast(`${rows.length}行をスプレッドシートに送信しました`);
+      resetAll();
+    } else {
+      throw new Error(json.message || 'エラー');
+    }
+  } catch (err) {
+    showToast('送信失敗：ネット接続を確認してください', true);
+    console.error(err);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="ti ti-circle-check"></i>この日の実績を保存';
+  }
 }
 
 function resetAll() {
@@ -470,27 +497,11 @@ function resetAll() {
 }
 
 function updateCount() {
-  const dates = [...new Set(records.map(r => r['施工日']))];
-  document.getElementById('record-count').textContent = `${records.length} 行 / ${dates.length} 日分`;
+  // Google連携版ではローカル件数は表示しない
 }
 
 function exportCSV() {
-  if (records.length === 0) { showToast('保存済みデータがありません', true); return; }
-  const keys = ['施工日','号機番号','種別','地点番号',
-    'フライアッシュ層完了深度_mm','掘削完了深度_mm','生コン打設数量_m3',
-    '地中障害','障害発生深度_mm','障害撤去完了深度_mm','障害物','備考','登録日時'];
-  const header = keys.join(',');
-  const rows = records.map(r => keys.map(k => `"${String(r[k]??'').replace(/"/g,'""')}"`).join(','));
-  const csv = '\uFEFF' + [header, ...rows].join('\n');
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `施工実績_${new Date().toISOString().slice(0,10).replace(/-/g,'')}.csv`;
-  document.body.appendChild(a); a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  showToast('CSVをダウンロードしました');
+  // 管理者はGoogleスプレッドシートからダウンロード
 }
 
 function showToast(msg, isError) {
