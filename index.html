@@ -505,25 +505,22 @@ async function submitRecord() {
   btn.innerHTML = '<i class="ti ti-loader-2" style="animation:spin 1s linear infinite;"></i>　送信中...';
 
   try {
-    const res = await fetch(GAS_URL, {
+    // no-corsで送信（レスポンスは読めないがスプレッドシートには書き込まれる）
+    await fetch(GAS_URL, {
       method: 'POST',
+      mode: 'no-cors',
       body: JSON.stringify({ mode: isUpdate ? 'update' : 'insert', sessionId, rows })
     });
-    const json = await res.json();
-    if (json.status === 'ok') {
-      // ローカル履歴を更新
-      if (isUpdate) {
-        const idx = sessions.findIndex(s => s.sessionId === sessionId);
-        if (idx !== -1) sessions[idx] = { sessionId, 施工日: date, 号機番号: asset, 送信日時: new Date().toLocaleString('ja-JP'), rows };
-      } else {
-        sessions.unshift({ sessionId, 施工日: date, 号機番号: asset, 送信日時: new Date().toLocaleString('ja-JP'), rows });
-      }
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
-      showToast(isUpdate ? '修正内容を再送信しました' : `${rows.length}行を送信しました`);
-      cancelEdit();
+    // no-corsではレスポンスが読めないので、送信できた時点で成功とみなす
+    if (isUpdate) {
+      const idx = sessions.findIndex(s => s.sessionId === sessionId);
+      if (idx !== -1) sessions[idx] = { sessionId, 施工日: date, 号機番号: asset, 送信日時: new Date().toLocaleString('ja-JP'), rows };
     } else {
-      throw new Error(json.message || 'エラー');
+      sessions.unshift({ sessionId, 施工日: date, 号機番号: asset, 送信日時: new Date().toLocaleString('ja-JP'), rows });
     }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
+    showToast(isUpdate ? '修正内容を再送信しました' : `${rows.length}行を送信しました`);
+    cancelEdit();
   } catch (err) {
     showToast('送信失敗：ネット接続を確認してください', true);
   } finally {
@@ -629,17 +626,15 @@ function deleteSession(sessionId) {
 
 async function doDelete(sessionId) {
   try {
-    const res = await fetch(GAS_URL, {
+    await fetch(GAS_URL, {
       method: 'POST',
+      mode: 'no-cors',
       body: JSON.stringify({ mode: 'update', sessionId, rows: [] })
     });
-    const json = await res.json();
-    if (json.status === 'ok') {
-      sessions = sessions.filter(s => s.sessionId !== sessionId);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
-      renderHistory();
-      showToast('削除しました');
-    } else { throw new Error(); }
+    sessions = sessions.filter(s => s.sessionId !== sessionId);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
+    renderHistory();
+    showToast('削除しました');
   } catch {
     showToast('削除失敗：ネット接続を確認してください', true);
   }
