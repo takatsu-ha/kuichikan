@@ -218,7 +218,7 @@
       <input type="date" id="work-date">
     </div>
     <div class="field">
-      <label>施工アセット 号機番号</label>
+      <label>施工号機</label>
       <select id="asset-num">
         <option value="">-- 選択 --</option>
         <option>1号機</option><option>2号機</option><option>3号機</option>
@@ -328,7 +328,7 @@ function addPile() {
     </div>
     <div class="field">
       <label>地点番号</label>
-      <input type="text" placeholder="例：A-12" inputmode="text" data-field="pile-point">
+      <input type="text" placeholder="例：401" inputmode="text" data-field="pile-point">
     </div>${remarksHTML()}`;
   document.getElementById('pile-cards').appendChild(div);
   updateBadge('pile-badge', pileCount);
@@ -348,27 +348,25 @@ function addExc() {
     </div>
     <div class="field">
       <label>地点番号</label>
-      <input type="text" placeholder="例：A-11" inputmode="text" data-field="exc-point">
+      <input type="text" placeholder="例：401" inputmode="text" data-field="exc-point">
     </div>
     <div class="divider"></div>
-    <div class="field-row">
-      <div class="field">
-        <label>フライアッシュ層完了深度<span class="gl-note">GL基準</span></label>
-        <div class="unit-wrap">
-          <input type="text" inputmode="text" placeholder="-1200" data-field="fly-depth" data-numeric="true">
-          <span class="unit-tag">mm</span>
-        </div>
-      </div>
-      <div class="field">
-        <label>掘削完了深度<span class="gl-note">GL基準</span></label>
-        <div class="unit-wrap">
-          <input type="text" inputmode="text" placeholder="-3500" data-field="exc-depth" data-numeric="true">
-          <span class="unit-tag">mm</span>
-        </div>
+    <div class="field">
+      <label>フライアッシュ層完了深度<span class="gl-note">GL基準</span></label>
+      <div class="unit-wrap">
+        <input type="text" inputmode="text" placeholder="-1200" data-field="fly-depth" data-numeric="true">
+        <span class="unit-tag">mm</span>
       </div>
     </div>
     <div class="field">
-      <label>生コン打設数量</label>
+      <label>掘削完了深度<span class="gl-note">GL基準</span></label>
+      <div class="unit-wrap">
+        <input type="text" inputmode="text" placeholder="-3500" data-field="exc-depth" data-numeric="true">
+        <span class="unit-tag">mm</span>
+      </div>
+    </div>
+    <div class="field">
+      <label>流動化処理材打設数量</label>
       <div class="unit-wrap">
         <input type="text" inputmode="decimal" placeholder="0.00" data-field="concrete-vol" data-numeric="true">
         <span class="unit-tag">m³</span>
@@ -423,7 +421,7 @@ function addBack() {
     </div>
     <div class="field">
       <label>地点番号</label>
-      <input type="text" placeholder="例：A-10" inputmode="text" data-field="back-point">
+      <input type="text" placeholder="例：401" inputmode="text" data-field="back-point">
     </div>${remarksHTML()}`;
   document.getElementById('back-cards').appendChild(div);
   updateBadge('back-badge', backCount);
@@ -464,7 +462,7 @@ function collectRows(date, asset) {
     const point = getVal(card,'pile-point');
     if (!point) return; // 地点番号が空なら追加しない
     rows.push({ ...base, 種別: '杭芯セット完了', 地点番号: point,
-      フライアッシュ層完了深度_mm:'', 掘削完了深度_mm:'', 生コン打設数量_m3:'',
+      フライアッシュ層完了深度_mm:'', 掘削完了深度_mm:'', 流動化処理材打設数量_m3:'',
       地中障害:'', 障害発生深度_mm:'', 障害撤去完了深度_mm:'', 障害物:'',
       備考: getVal(card,'remarks') });
   });
@@ -475,7 +473,7 @@ function collectRows(date, asset) {
     rows.push({ ...base, 種別: '掘削完了', 地点番号: point,
       フライアッシュ層完了深度_mm: getVal(card,'fly-depth'),
       掘削完了深度_mm: getVal(card,'exc-depth'),
-      生コン打設数量_m3: getVal(card,'concrete-vol'),
+      流動化処理材打設数量_m3: getVal(card,'concrete-vol'),
       地中障害: hasObs ? '有' : '無',
       障害発生深度_mm: hasObs ? getVal(card,'obs-start-depth') : '',
       障害撤去完了深度_mm: hasObs ? getVal(card,'obs-end-depth') : '',
@@ -486,7 +484,7 @@ function collectRows(date, asset) {
     const point = getVal(card,'back-point');
     if (!point) return; // 地点番号が空なら追加しない
     rows.push({ ...base, 種別: '埋め戻し完了', 地点番号: point,
-      フライアッシュ層完了深度_mm:'', 掘削完了深度_mm:'', 生コン打設数量_m3:'',
+      フライアッシュ層完了深度_mm:'', 掘削完了深度_mm:'', 流動化処理材打設数量_m3:'',
       地中障害:'', 障害発生深度_mm:'', 障害撤去完了深度_mm:'', 障害物:'',
       備考: getVal(card,'remarks') });
   });
@@ -578,7 +576,7 @@ function startEdit(sessionId) {
     setVal(c, 'exc-point', row.地点番号);
     setVal(c, 'fly-depth', row.フライアッシュ層完了深度_mm);
     setVal(c, 'exc-depth', row.掘削完了深度_mm);
-    setVal(c, 'concrete-vol', row.生コン打設数量_m3);
+    setVal(c, 'concrete-vol', row.流動化処理材打設数量_m3);
     setVal(c, 'remarks', row.備考);
     if (row.地中障害 === '有') {
       const tog = c.querySelector('.toggle');
@@ -661,7 +659,7 @@ function renderHistory() {
       let detail = `<strong>${r.地点番号 || '（地点番号なし）'}</strong>`;
       if (r.種別 === '掘削完了') {
         if (r.掘削完了深度_mm) detail += `　深度 ${r.掘削完了深度_mm}mm`;
-        if (r.生コン打設数量_m3) detail += `　生コン ${r.生コン打設数量_m3}m³`;
+        if (r.流動化処理材打設数量_m3) detail += `　流動化処理材 ${r.流動化処理材打設数量_m3}m³`;
         if (r.地中障害 === '有') detail += `　<span style="color:var(--orange);font-weight:600;">⚠ 障害あり</span>`;
       }
       if (r.備考) detail += `<br>備考：${r.備考}`;
