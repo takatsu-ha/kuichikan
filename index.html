@@ -230,7 +230,7 @@
   <div class="block-group">
     <div class="block-header">
       <div class="block-title pile"><i class="ti ti-map-pin"></i>杭芯セット完了地点</div>
-      <span class="badge pile" id="pile-badge">1 地点</span>
+      <span class="badge pile" id="pile-badge">未入力</span>
     </div>
     <div id="pile-cards"></div>
     <button class="add-btn pile" onclick="addPile()"><i class="ti ti-plus"></i>地点を追加</button>
@@ -239,7 +239,7 @@
   <div class="block-group">
     <div class="block-header">
       <div class="block-title exc"><i class="ti ti-arrow-down-circle"></i>掘削完了地点</div>
-      <span class="badge exc" id="exc-badge">1 地点</span>
+      <span class="badge exc" id="exc-badge">未入力</span>
     </div>
     <div id="exc-cards"></div>
     <button class="add-btn exc" onclick="addExc()"><i class="ti ti-plus"></i>地点を追加</button>
@@ -247,8 +247,8 @@
 
   <div class="block-group">
     <div class="block-header">
-      <div class="block-title back"><i class="ti ti-layer-difference"></i>埋め戻し完了地点</div>
-      <span class="badge back" id="back-badge">1 地点</span>
+      <div class="block-title back"><i class="ti ti-separator"></i>埋め戻し完了地点</div>
+      <span class="badge back" id="back-badge">未入力</span>
     </div>
     <div id="back-cards"></div>
     <button class="add-btn back" onclick="addBack()"><i class="ti ti-plus"></i>地点を追加</button>
@@ -354,14 +354,14 @@ function addExc() {
     <div class="field">
       <label>フライアッシュ層完了深度<span class="gl-note">GL基準</span></label>
       <div class="unit-wrap">
-        <input type="text" inputmode="text" placeholder="-1200" data-field="fly-depth" data-numeric="true">
+        <input type="text" inputmode="text" placeholder="-9000" data-field="fly-depth" data-numeric="true">
         <span class="unit-tag">mm</span>
       </div>
     </div>
     <div class="field">
       <label>流動化処理材打設数量</label>
       <div class="unit-wrap">
-        <input type="text" inputmode="decimal" placeholder="0.00" data-field="concrete-vol" data-numeric="true">
+        <input type="text" inputmode="decimal" placeholder="0.0" data-field="concrete-vol" data-numeric="true">
         <span class="unit-tag">m³</span>
       </div>
     </div>
@@ -378,26 +378,24 @@ function addExc() {
     <div class="obstacle-area" id="${boxId}">
       <div class="obs-label"><i class="ti ti-alert-triangle" style="font-size:13px;"></i>障害詳細</div>
       <div class="field">
-        <label>掘削完了深度<span class="gl-note">GL基準</span></label>
+        <label>障害発生深度<span class="gl-note">GL基準</span></label>
         <div class="unit-wrap">
-          <input type="text" inputmode="text" placeholder="-3500" data-field="exc-depth" data-numeric="true">
+          <input type="text" inputmode="text" placeholder="-5000" data-field="obs-start-depth" data-numeric="true">
           <span class="unit-tag">mm</span>
         </div>
       </div>
-      <div class="field-row">
-        <div class="field">
-          <label>障害発生深度<span class="gl-note">GL基準</span></label>
-          <div class="unit-wrap">
-            <input type="text" inputmode="text" placeholder="-1500" data-field="obs-start-depth" data-numeric="true">
-            <span class="unit-tag">mm</span>
-          </div>
+      <div class="field">
+        <label>障害撤去完了深度<span class="gl-note">GL基準</span></label>
+        <div class="unit-wrap">
+          <input type="text" inputmode="text" placeholder="-13000" data-field="obs-end-depth" data-numeric="true">
+          <span class="unit-tag">mm</span>
         </div>
-        <div class="field">
-          <label>障害撤去完了深度<span class="gl-note">GL基準</span></label>
-          <div class="unit-wrap">
-            <input type="text" inputmode="text" placeholder="-2000" data-field="obs-end-depth" data-numeric="true">
-            <span class="unit-tag">mm</span>
-          </div>
+      </div>
+      <div class="field">
+        <label>掘削完了深度<span class="gl-note">GL基準</span></label>
+        <div class="unit-wrap">
+          <input type="text" inputmode="text" placeholder="-15000" data-field="exc-depth" data-numeric="true">
+          <span class="unit-tag">mm</span>
         </div>
       </div>
       <div class="field">
@@ -450,7 +448,16 @@ function removeCard(containerId, badgeId, btn, type) {
 }
 
 function updateBadge(id, n) {
-  document.getElementById(id).textContent = `${n} 地点`;
+  const el = document.getElementById(id);
+  if (n === 0) {
+    el.textContent = '未入力';
+    el.style.background = 'var(--border-light)';
+    el.style.color = 'var(--text-secondary)';
+  } else {
+    el.textContent = `${n} 地点`;
+    el.style.background = '';
+    el.style.color = '';
+  }
 }
 
 function getVal(card, field) {
@@ -627,7 +634,9 @@ function resetForm(resetDate = true) {
     document.getElementById('work-date').value = `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;
   }
   document.getElementById('asset-num').value = '';
-  addPile(); addExc(); addBack();
+  updateBadge('pile-badge', 0);
+  updateBadge('exc-badge', 0);
+  updateBadge('back-badge', 0);
 }
 
 /* ===== 削除 ===== */
